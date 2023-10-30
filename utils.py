@@ -2,7 +2,12 @@
 Contains various utility functions for PyTorch model training and saving.
 """
 import torch
+import pathlib
 from pathlib import Path
+import requests
+import zipfile
+
+
 
 def save_model(model: torch.nn.Module,
                target_dir: str,
@@ -33,3 +38,51 @@ def save_model(model: torch.nn.Module,
   print(f"[INFO] Saving model to: {model_save_path}")
   torch.save(obj=model.state_dict(),
              f=model_save_path)
+
+
+
+def downloading_zip_data(url:str,
+                         data_path:pathlib.PosixPath,
+                         zip_name:str):
+    
+    """
+    Function to download zip data from remote
+
+     Args:
+        url: Url where remote data is stored
+        data_path: Path where you want to put the data 
+        zip_name: Remote Zipfile name
+
+    Return:
+       Image_path: pathlib.PosixPath
+
+    Example Usage:
+
+        url = "https://github.com/mrdbourke/pytorch-deep-learning/raw/main/data/pizza_steak_sushi.zip"
+        data_path = Path('data/')
+        zip_name = "pizza_steak_sushi"
+        downloading_zip_data(url,data_path, zip_name)
+    
+    """
+
+    image_path = data_path/zip_name
+
+    if image_path.is_dir():
+        print(f"[INFO] {image_path} already exist")
+
+    else:
+        print(f'making {image_path} dir ')
+        image_path.mkdir(parents = True, exist_ok = True)
+
+        with open(data_path / f'{zip_name}.zip','wb') as files:
+            req = requests.get(url)
+            print('[INFO] Downloading the data')
+            files.write(req.content)
+
+        with zipfile.ZipFile(data_path / f'{zip_name}.zip','r') as files:
+            print('[INFO] unzipping zip')
+            files.extractall(image_path)
+    
+    return image_path
+    
+        
