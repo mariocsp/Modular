@@ -6,6 +6,8 @@ import pathlib
 from pathlib import Path
 import requests
 import zipfile
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 
@@ -84,5 +86,27 @@ def downloading_zip_data(url:str,
             files.extractall(image_path)
     
     return image_path
+
+
+def manual_tensorboard(dict_info:dict):
+    fig, axs = plt.subplots(3,3)
+    fig.set_figheight(12)
+    fig.set_figwidth(12)
+
+    for j,i in enumerate(dict_info):
+        value = dict_info[i]
+        x = np.linspace(0,100,len(value))
+        fig.add_subplot(3, 3, j+ 1 )
+        plt.plot(x,value)
+
+        plt.title(i)
+        plt.xticks([])
+        plt.yticks([])
+        plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+
+    fig.tight_layout(pad=1)
+    fig.show()
+
+    return True
     
         
